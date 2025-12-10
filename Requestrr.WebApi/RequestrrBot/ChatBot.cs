@@ -210,36 +210,62 @@ namespace Requestrr.WebApi.RequestrrBot
                         {
                             await ApplyBotConfigurationAsync(newSettings);
 
-                            var prop = _slashCommands.GetType().GetProperty("_updateList", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                            prop.SetValue(_slashCommands, new List<KeyValuePair<ulong?, Type>>());
-
                             var slashCommandType = SlashCommandBuilder.Build(_logger, newSettings, _serviceProvider.Get<RadarrSettingsProvider>(), _serviceProvider.Get<SonarrSettingsProvider>(), _serviceProvider.Get<OverseerrSettingsProvider>(), _serviceProvider.Get<OmbiSettingsProvider>(), _serviceProvider.Get<LidarrSettingsProvider>());
 
                             if (newSettings.EnableRequestsThroughDirectMessages)
                             {
-                                try { _slashCommands.RegisterCommands(slashCommandType); }
+                                try
+                                {
+                                    _slashCommands.RegisterCommands(slashCommandType);
+                                    _logger.LogInformation("Registered global slash commands");
+                                }
                                 catch (System.Exception ex) { _logger.LogError(ex, "Error while registering global slash commands: " + ex.Message); }
+
+                                // Add delay to prevent Discord rate limiting
+                                await Task.Delay(TimeSpan.FromSeconds(2));
 
                                 foreach (var guildId in _client.Guilds.Keys)
                                 {
-                                    try { _slashCommands.RegisterCommands<EmptySlashCommands>(guildId); }
-                                    catch (System.Exception ex) { _logger.LogError(ex, $"Error while emptying guild-specific slash commands for guid {guildId}: " + ex.Message); }
+                                    try
+                                    {
+                                        _slashCommands.RegisterCommands<EmptySlashCommands>(guildId);
+                                        _logger.LogInformation($"Emptied guild-specific slash commands for guild {guildId}");
+                                    }
+                                    catch (System.Exception ex) { _logger.LogError(ex, $"Error while emptying guild-specific slash commands for guild {guildId}: " + ex.Message); }
+
+                                    // Add delay between guild registrations to prevent rate limiting
+                                    await Task.Delay(TimeSpan.FromSeconds(1));
                                 }
                             }
                             else
                             {
-                                try { _slashCommands.RegisterCommands<EmptySlashCommands>(); }
+                                try
+                                {
+                                    _slashCommands.RegisterCommands<EmptySlashCommands>();
+                                    _logger.LogInformation("Emptied global slash commands");
+                                }
                                 catch (System.Exception ex) { _logger.LogError(ex, "Error while emptying global slash commands: " + ex.Message); }
+
+                                // Add delay to prevent Discord rate limiting
+                                await Task.Delay(TimeSpan.FromSeconds(2));
 
                                 foreach (var guildId in _client.Guilds.Keys)
                                 {
-                                    try { _slashCommands.RegisterCommands(slashCommandType, guildId); }
-                                    catch (System.Exception ex) { _logger.LogError(ex, $"Error while registering guild-specific slash commands for guid {guildId}: " + ex.Message); }
+                                    try
+                                    {
+                                        _slashCommands.RegisterCommands(slashCommandType, guildId);
+                                        _logger.LogInformation($"Registered guild-specific slash commands for guild {guildId}");
+                                    }
+                                    catch (System.Exception ex) { _logger.LogError(ex, $"Error while registering guild-specific slash commands for guild {guildId}: " + ex.Message); }
+
+                                    // Add delay between guild registrations to prevent rate limiting
+                                    await Task.Delay(TimeSpan.FromSeconds(1));
                                 }
                             }
 
                             await _slashCommands.RefreshCommands();
-                            await Task.Delay(TimeSpan.FromMinutes(1));
+                            _logger.LogInformation("Slash commands refresh completed");
+                            await Task.Delay(TimeSpan.FromSeconds(5));
                         }
                         catch (Exception ex)
                         {

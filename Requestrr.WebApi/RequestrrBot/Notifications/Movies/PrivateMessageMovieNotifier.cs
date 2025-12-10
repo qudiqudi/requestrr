@@ -53,6 +53,9 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.Movies
                         {
                             var channel = await user.CreateDmChannelAsync();
                             await channel.SendMessageAsync(Language.Current.DiscordNotificationMovieDM.ReplaceTokens(movie), await DiscordMovieUserInterface.GenerateMovieDetailsAsync(movie));
+
+                            // Add delay to prevent Discord rate limiting
+                            await Task.Delay(TimeSpan.FromSeconds(1));
                         }
                         else
                         {

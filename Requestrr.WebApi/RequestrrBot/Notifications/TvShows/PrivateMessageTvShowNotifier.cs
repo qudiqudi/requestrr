@@ -61,6 +61,9 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.TvShows
                                 await channel.SendMessageAsync(Language.Current.DiscordNotificationTvDMSeason.ReplaceTokens(tvShow, seasonNumber), DiscordTvShowUserInterface.GenerateTvShowDetailsAsync(tvShow));
                             else
                                 await channel.SendMessageAsync(Language.Current.DiscordNotificationTvDMFirstEpisode.ReplaceTokens(tvShow, seasonNumber), DiscordTvShowUserInterface.GenerateTvShowDetailsAsync(tvShow));
+
+                            // Add delay to prevent Discord rate limiting
+                            await Task.Delay(TimeSpan.FromSeconds(1));
                         }
                         else
                         {

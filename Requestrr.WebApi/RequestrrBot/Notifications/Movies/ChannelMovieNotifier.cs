@@ -46,6 +46,9 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.Movies
                     try
                     {
                         await NotifyUsersInChannel(movie, discordUserIds, userNotified, channel);
+
+                        // Add delay to prevent Discord rate limiting
+                        await Task.Delay(TimeSpan.FromSeconds(1));
                     }
                     catch (System.Exception ex)
                     {

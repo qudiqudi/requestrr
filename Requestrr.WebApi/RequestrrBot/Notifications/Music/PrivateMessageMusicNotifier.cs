@@ -52,6 +52,9 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.Music
                         {
                             DiscordDmChannel channel = await user.CreateDmChannelAsync();
                             await channel.SendMessageAsync(Language.Current.DiscordNotificationMusicArtistDM.ReplaceTokens(musicArtist), DiscordMusicUserInterface.GenerateMusicArtistDetails(musicArtist));
+
+                            // Add delay to prevent Discord rate limiting
+                            await Task.Delay(TimeSpan.FromSeconds(1));
                         }
                         else
                         {
