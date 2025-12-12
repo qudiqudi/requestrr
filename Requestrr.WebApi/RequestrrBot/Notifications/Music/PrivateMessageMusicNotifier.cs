@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Requestrr.WebApi.RequestrrBot.ChatClients.Discord;
 using Requestrr.WebApi.RequestrrBot.Locale;
 using Requestrr.WebApi.RequestrrBot.Music;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
