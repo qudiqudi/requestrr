@@ -58,7 +58,7 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.Movies
                             try
                             {
                                 var userNotified = await _notifier.NotifyAsync(request.Value.ToArray(), availableMovies[request.Key], _tokenSource.Token);
-                                notifiedCount += userNotified.Length;
+                                notifiedCount += userNotified.Count;
 
                                 foreach (var userId in userNotified)
                                 {
