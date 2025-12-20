@@ -1056,7 +1056,7 @@ namespace Requestrr.WebApi.RequestrrBot.DownloadClients.Overseerr
             var stopwatch = Stopwatch.StartNew();
             var response = await client.PostAsync(url, postRequest);
             stopwatch.Stop();
-            _logger.LogHttpRequest("Overseerr", "POST", url, response.StatusCode, stopwatch.ElapsedMilliseconds);
+            _logger.LogHttpRequest(Program.DiagnosticsSettings, "Overseerr", "POST", url, response.StatusCode, stopwatch.ElapsedMilliseconds);
             return response;
         }
 
@@ -1066,7 +1066,7 @@ namespace Requestrr.WebApi.RequestrrBot.DownloadClients.Overseerr
             var stopwatch = Stopwatch.StartNew();
             var response = await HttpGetAsync(client, OverseerrSettings, url);
             stopwatch.Stop();
-            _logger.LogHttpRequest("Overseerr", "GET", url, response.StatusCode, stopwatch.ElapsedMilliseconds);
+            _logger.LogHttpRequest(Program.DiagnosticsSettings, "Overseerr", "GET", url, response.StatusCode, stopwatch.ElapsedMilliseconds);
             return response;
         }
 
@@ -1086,7 +1086,7 @@ namespace Requestrr.WebApi.RequestrrBot.DownloadClients.Overseerr
             var stopwatch = Stopwatch.StartNew();
             var response = await client.PutAsync(url, postRequest);
             stopwatch.Stop();
-            _logger.LogHttpRequest("Overseerr", "PUT", url, response.StatusCode, stopwatch.ElapsedMilliseconds);
+            _logger.LogHttpRequest(Program.DiagnosticsSettings, "Overseerr", "PUT", url, response.StatusCode, stopwatch.ElapsedMilliseconds);
             return response;
         }
 

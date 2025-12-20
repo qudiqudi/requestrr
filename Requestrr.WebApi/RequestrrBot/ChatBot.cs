@@ -221,7 +221,7 @@ namespace Requestrr.WebApi.RequestrrBot
                             var slashCommandType = SlashCommandBuilder.Build(_logger, newSettings, _serviceProvider.Get<RadarrSettingsProvider>(), _serviceProvider.Get<SonarrSettingsProvider>(), _serviceProvider.Get<OverseerrSettingsProvider>(), _serviceProvider.Get<OmbiSettingsProvider>(), _serviceProvider.Get<LidarrSettingsProvider>());
 
                             var guildCount = _client.Guilds.Count;
-                            _logger.LogInformation($"Starting slash command registration for {guildCount} guilds");
+                            _logger.LogDiscordSlashCommand(Program.DiagnosticsSettings, $"Starting slash command registration for {guildCount} guilds");
                             var registrationStopwatch = Stopwatch.StartNew();
 
                             if (newSettings.EnableRequestsThroughDirectMessages)
@@ -229,7 +229,7 @@ namespace Requestrr.WebApi.RequestrrBot
                                 try
                                 {
                                     _slashCommands.RegisterCommands(slashCommandType);
-                                    _logger.LogInformation("Registered global slash commands");
+                                    _logger.LogDiscordSlashCommand(Program.DiagnosticsSettings, "Registered global slash commands");
                                 }
                                 catch (System.Exception ex) { _logger.LogError(ex, "Error while registering global slash commands: " + ex.Message); }
 
@@ -241,7 +241,7 @@ namespace Requestrr.WebApi.RequestrrBot
                                     try
                                     {
                                         _slashCommands.RegisterCommands<EmptySlashCommands>(guildId);
-                                        _logger.LogInformation($"Emptied guild-specific slash commands for guild {guildId}");
+                                        _logger.LogDiscordSlashCommand(Program.DiagnosticsSettings, $"Emptied guild-specific slash commands for guild {guildId}");
                                     }
                                     catch (System.Exception ex) { _logger.LogError(ex, $"Error while emptying guild-specific slash commands for guild {guildId}: " + ex.Message); }
 
@@ -254,7 +254,7 @@ namespace Requestrr.WebApi.RequestrrBot
                                 try
                                 {
                                     _slashCommands.RegisterCommands<EmptySlashCommands>();
-                                    _logger.LogInformation("Emptied global slash commands");
+                                    _logger.LogDiscordSlashCommand(Program.DiagnosticsSettings, "Emptied global slash commands");
                                 }
                                 catch (System.Exception ex) { _logger.LogError(ex, "Error while emptying global slash commands: " + ex.Message); }
 
@@ -266,7 +266,7 @@ namespace Requestrr.WebApi.RequestrrBot
                                     try
                                     {
                                         _slashCommands.RegisterCommands(slashCommandType, guildId);
-                                        _logger.LogInformation($"Registered guild-specific slash commands for guild {guildId}");
+                                        _logger.LogDiscordSlashCommand(Program.DiagnosticsSettings, $"Registered guild-specific slash commands for guild {guildId}");
                                     }
                                     catch (System.Exception ex) { _logger.LogError(ex, $"Error while registering guild-specific slash commands for guild {guildId}: " + ex.Message); }
 
@@ -277,7 +277,7 @@ namespace Requestrr.WebApi.RequestrrBot
 
                             await _slashCommands.RefreshCommands();
                             registrationStopwatch.Stop();
-                            _logger.LogInformation($"Slash command registration completed in {registrationStopwatch.ElapsedMilliseconds}ms across {guildCount} guilds");
+                            _logger.LogDiscordSlashCommand(Program.DiagnosticsSettings, $"Slash command registration completed in {registrationStopwatch.ElapsedMilliseconds}ms across {guildCount} guilds");
                             await Task.Delay(TimeSpan.FromSeconds(5));
                         }
                         catch (Exception ex)
@@ -305,19 +305,19 @@ namespace Requestrr.WebApi.RequestrrBot
         {
             var guildCount = client.Guilds.Count;
             var latency = client.Ping;
-            _logger.LogInformation($"Discord bot connected to {guildCount} guilds, Latency: {latency}ms");
+            _logger.LogDiscordConnection(Program.DiagnosticsSettings, $"Discord bot connected to {guildCount} guilds, Latency: {latency}ms");
             await ApplyBotConfigurationAsync(_currentSettings);
         }
 
         private Task HeartbeatedHandler(DiscordClient client, HeartbeatEventArgs args)
         {
-            _logger.LogInformation($"Heartbeat received, Latency: {args.Ping}ms");
+            _logger.LogDiscordHeartbeat(Program.DiagnosticsSettings, args.Ping);
             return Task.CompletedTask;
         }
 
         private Task ResumedHandler(DiscordClient client, ReadyEventArgs args)
         {
-            _logger.LogInformation("Discord connection resumed");
+            _logger.LogDiscordConnection(Program.DiagnosticsSettings, "Discord connection resumed");
             return Task.CompletedTask;
         }
 

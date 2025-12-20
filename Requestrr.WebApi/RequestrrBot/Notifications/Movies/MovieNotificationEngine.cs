@@ -46,7 +46,7 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.Movies
                     try
                     {
                         currentRequests = _notificationRequestRepository.GetAllMovieNotifications();
-                        _logger.LogNotificationStart("Movie", currentRequests.Count);
+                        _logger.LogNotificationStart(Program.DiagnosticsSettings, "Movie", currentRequests.Count);
 
                         var availableMovies = await _movieSearcher.SearchAvailableMoviesAsync(new HashSet<int>(currentRequests.Keys), _tokenSource.Token);
 
@@ -95,7 +95,7 @@ namespace Requestrr.WebApi.RequestrrBot.Notifications.Movies
                     }
 
                     cycleStopwatch.Stop();
-                    _logger.LogNotificationCycle("Movie", currentRequests.Count, currentRequests.Count, notifiedCount, cycleStopwatch.ElapsedMilliseconds);
+                    _logger.LogNotificationCycle(Program.DiagnosticsSettings, "Movie", currentRequests.Count, currentRequests.Count, notifiedCount, cycleStopwatch.ElapsedMilliseconds);
 
                     await Task.Delay(TimeSpan.FromMinutes(1), _tokenSource.Token);
                 }
